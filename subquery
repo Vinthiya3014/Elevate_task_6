@@ -1,0 +1,40 @@
+SELECT h.hostel_name
+FROM hostel h
+WHERE h.hostel_id = (
+    SELECT r.hostel_id
+    FROM allocation a
+    JOIN room r ON a.room_id = r.room_id
+    WHERE a.student_id = 101
+);
+SELECT s.student_id, s.name,
+       (SELECT h.hostel_name
+        FROM allocation a
+        JOIN room r ON a.room_id = r.room_id
+        JOIN hostel h ON r.hostel_id = h.hostel_id
+        WHERE a.student_id = s.student_id) AS hostel_name
+FROM student s;
+SELECT s.name
+FROM student s
+WHERE s.student_id IN (
+    SELECT a.student_id
+    FROM allocation a
+    JOIN room r ON a.room_id = r.room_id
+    JOIN hostel h ON r.hostel_id = h.hostel_id
+    WHERE h.hostel_name IN ('A', 'B')
+);
+SELECT s.student_id, s.name
+FROM student s
+WHERE EXISTS (
+    SELECT 1
+    FROM allocation a
+    WHERE a.student_id = s.student_id
+);
+SELECT hostel_name
+FROM hostel
+WHERE hostel_id = (
+    SELECT r.hostel_id
+    FROM allocation a
+    JOIN room r ON a.room_id = r.room_id
+    JOIN student s ON a.student_id = s.student_id
+    WHERE s.name = 'John'
+);
